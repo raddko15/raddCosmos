@@ -4262,7 +4262,7 @@ const AU = 40;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! babel-polyfill */130);
-module.exports = __webpack_require__(/*! C:\Users\Radek\Desktop\MYGAME\raddCosmos\app\index.js */332);
+module.exports = __webpack_require__(/*! C:\Users\FBC834\Desktop\Projects\raddCosmos\app\index.js */332);
 
 
 /***/ }),
@@ -10605,68 +10605,140 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-//
 
-var angle = 0;
+
 var posX = 0;
 var posY = 0;
-var game = new __WEBPACK_IMPORTED_MODULE_4_phaser___default.a.Game(1920, 1080, __WEBPACK_IMPORTED_MODULE_4_phaser___default.a.AUTO, '', {preload: preload, create: create, update: update});
+const game = new __WEBPACK_IMPORTED_MODULE_4_phaser___default.a.Game(1920, 1080, __WEBPACK_IMPORTED_MODULE_4_phaser___default.a.AUTO, '', {preload: preload, create: create, update: update});
 var graphics;
+var sprite;
+
+var planets1;
+var celesticalBodieGroup;
+
+var ellipse1;
+
+function drawEllipse(width, height, ellipseWidth) {
+    var ellipseHeight = ellipseWidth/2;
+    graphics.lineStyle(2, 0xffffff, 1);
+    graphics.drawEllipse(width, height, ellipseWidth, ellipseHeight);
+
+   // ellipse1 = new Phaser.Ellipse(width, height, ellipseWidth, ellipseHeight);
+
+}
+
+function drawPlanetCss(width, height,planet, posX, posY) {
+     graphics.lineStyle(1, planet.color, 1);
+     graphics.beginFill(planet.color, 1);
+     graphics.drawCircle(width + posX, height  + posY, planet.width);
+     graphics.endFill();
+
+}
 function preload() {
-
-    game.load.image('sky', 'assets/sky.png');
-    game.load.image('ground', 'assets/platform.png');
-    game.load.image('star', 'assets/star.png');
-    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-
+    game.load.image('stars', 'app/assets/images/stars2.jpg');
+    game.load.image('sun', 'app/assets/images/sun3.png');
+    game.load.image('mars', 'app/assets/images/Mars2.png');
 }
 
 
 function create() {
-    // game.time.advancedTiming = true;
-    // game.time.desiredFps = 60;
-    // game.time.slowMotion = 1.0;
-//    var position = {
-//        x: game.width -
-//    y: game.height -
-// }
-    // ellipse = new Phaser.Ellipse(game.world.centerX, game.world.centerY, 300, 550);
+    var skyLayer = game.add.group();
+
+    //  We're going to be using physics, so enable the Arcade Physics system
+    game.physics.startSystem(__WEBPACK_IMPORTED_MODULE_4_phaser___default.a.Physics.ARCADE);
+
+   //game.add.image(0, 0, 'stars');
 
 
-        graphics = game.add.graphics();
+    celesticalBodieGroup = game.add.physicsGroup(__WEBPACK_IMPORTED_MODULE_4_phaser___default.a.Physics.ARCADE);
+    celesticalBodieGroup.enableBody = true;
+
+    // sun.body.setCircle(5);
+
+
+    //var sun = celesticalBodies.create
+
+    graphics = game.add.graphics();
+
     __WEBPACK_IMPORTED_MODULE_1__store_ellipses__["a" /* ellipses */].forEach((ellipse, idx) => {
-        graphics.lineStyle(1, 0x00ff00, 1);
-        graphics.drawEllipse(game.width / 2, game.height / 2, ellipse.width, ellipse.width/2);
 
-        // graphics.beginFill(0xFF0000, 1);
-        graphics.drawCircle(game.width / 2, game.height / 2 - __WEBPACK_IMPORTED_MODULE_0__store_planets__["a" /* planets */][idx].width/2 + ellipse.width, 10);
+        drawEllipse(game.width / 2, game.height / 2, ellipse.width, ellipse.width / 2);
+
+        var planet = celesticalBodieGroup.create(game.width / 2 -15, game.height / 2-15 + ellipse.width/2, 'mars');
+
+        //planetsObj.push(celesticalBodieGroup.create(game.width / 2, game.height / 2 + ellipse.width/2, 'mars'));
+        planet.body.setCircle(30);
+        planet.z = 10;
+
+       // planetsObj[idx].body.setCircle(10);
+
+    });
+
+    //graphics.generateTexture;
+    var group1 = this.add.group();
+    sprite = game.add.sprite(game.width / 2, game.height / 2, graphics.generateTexture());
+    //sprite=game.add.group();
+    console.log(sprite);
+    sprite.anchor.set(0.5);
+
+    //  And destroy the original graphics object
+    graphics.destroy();
+
+    // ellipses.forEach((ellipse, idx) => {
+    //     var planet = celesticalBodieGroup.create(game.width / 2 -15, game.height / 2-15 + ellipse.width/2, 'mars');
+    //     //planetsObj.push(celesticalBodieGroup.create(game.width / 2, game.height / 2 + ellipse.width/2, 'mars'));
+    //     celesticalBodieGroup.children[idx].body.setCircle(100.5);
+    // });
+
+console.log(celesticalBodieGroup);
+    var sun = celesticalBodieGroup.create(game.width/2 -32.5, game.height / 2 -32.5, 'sun');
+    sun.body.setCircle(50);
 
 
 
-    })};
-    function update() {
+    game.world.bringToTop(celesticalBodieGroup);
+}
 
+function update() {
 //x = Acos(t)
 //y = Bcos)(T)
+    //graphics.clear();
+//console.log(planetsObj);
 
-       graphics.clear();
+    __WEBPACK_IMPORTED_MODULE_1__store_ellipses__["a" /* ellipses */].forEach((ellipse, idx) => {
+        posX = (ellipse.width * Math.cos(game.time.time / __WEBPACK_IMPORTED_MODULE_0__store_planets__["a" /* planets */][idx].rotatingSpeed));
+        posY = (ellipse.width/2 * Math.sin(game.time.time / __WEBPACK_IMPORTED_MODULE_0__store_planets__["a" /* planets */][idx].rotatingSpeed));
 
-       __WEBPACK_IMPORTED_MODULE_1__store_ellipses__["a" /* ellipses */].forEach((ellipse, idx) => {
-           graphics.lineStyle(1, 0x00ff00, 1);
-           graphics.drawEllipse(game.width / 2, game.height / 2, ellipse.width, ellipse.width/2);
-           posX = (ellipse.width *Math.cos(game.time.time/1080));
-           posY =  (ellipse.width/2 *Math.sin(game.time.time/1080));
-           graphics.lineStyle(1, __WEBPACK_IMPORTED_MODULE_0__store_planets__["a" /* planets */][idx].color, 1);
-           graphics.beginFill(__WEBPACK_IMPORTED_MODULE_0__store_planets__["a" /* planets */][idx].color, 1);
-         //  graphics.drawCircle(game.width / 2, game.height / 2 - planets[idx].width/2, 10);
-           graphics.drawCircle(game.width/2+posX, game.height/2 + posY, __WEBPACK_IMPORTED_MODULE_0__store_planets__["a" /* planets */][idx].width);
-           graphics.endFill();
-//console.log((ellipse.height));
-           angle= angle + 1;
+       // drawEllipse(game.width/2, game.height/2, ellipse.width, ellipse.width/2);
+      //  drawPlanetCss(game.width/2, game.height/2, planets[idx], posX, posY);
 
 
-       });
-    }
+       // planetsObj[idx].body.setZeroVelocity();
+         celesticalBodieGroup.children[idx].body.position.x = game.width/2 + posX - 15;
+         celesticalBodieGroup.children[idx].body.position.y = game.height/2  + posY - 15;
+
+
+       //   celesticalBodieGroup.children[idx].body.velocity.y=  100;
+       // celesticalBodieGroup.children[idx].kill();
+
+       // / planets1 = (celesticalBodieGroup.create(game.width/2 + posX, game.height/2  + posY, 'mars'));
+
+
+       //   planetsObj[idx].body.velocity.y += posY/100;
+        // planetsObj[idx].y = game.height/2  + posY;
+         //console.log( planetsObj[idx].x);
+
+        // graphics.lineStyle(1, planets[idx].color, 1);
+        // graphics.beginFill(planets[idx].color, 1);
+        // graphics.drawCircle(game.width/2 + posX, game.height/2  + posY, planets[idx].width);
+        // graphics.endFill();
+
+
+    });
+
+
+
+}
 
 // The mathematics is pretty simple, have a look at wikipedia.
 //
@@ -10699,48 +10771,48 @@ const planets = [
     {
         name: "mercury",
         width: 0.39*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
-        rotatingSpeed: 50,
+        rotatingSpeed: 1800,
         color: 0xdb1c0f
     },
     {   name: "venus",
         width: 0.72*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
-        rotatingSpeed: 50,
+        rotatingSpeed: 1080,
         color: 0xebf441
     },
     {
         name: "earth",
         width: __WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
-        rotatingSpeed: 50,
+        rotatingSpeed: 720,
         color: 0x7af442
     },
     {
         name: "mars",
         width: 1.52*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
-        rotatingSpeed: 50,
+        rotatingSpeed: 2160,
         color: 0x9a21a5
     },
     {
         name: "jupiter",
         width: 0.5*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
-        rotatingSpeed: 50,
+        rotatingSpeed: 1440,
         color: 0x0b14bc
     },
     {
         name: "saturn",
         width: 1*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
-        rotatingSpeed: 50,
+        rotatingSpeed: 2520,
         color: 0x4d8985
     },
     {
         name: "uranus",
         width: 1.3*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
-        rotatingSpeed: 50,
+        rotatingSpeed: 1600,
         color: 0x3f4949
     },
     {
         name: "neptun",
         width: 1.5*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
-        rotatingSpeed: 50,
+        rotatingSpeed: 2400,
         color: 0xc47c2b
     }
 ];
@@ -10764,22 +10836,22 @@ const planets = [
 const ellipses = [
     {
         name: "mercury",
-        width: __WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: __WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */]*3,
     },
     {   name: "venus",
-        width: 2*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 4*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     },
     {
         name: "earth",
-        width: 3*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */]
+        width: 5*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */]
     },
     {
         name: "mars",
-        width: 5.52*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 6.52*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     },
     {
         name: "jupiter",
-        width: 7.20*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 8.20*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     },
     {
         name: "saturn",
@@ -10787,11 +10859,11 @@ const ellipses = [
     },
     {
         name: "uranus",
-        width: 13.14*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 11.14*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     },
     {
         name: "neptun",
-        width: 16.34*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 12.84*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     }
 
 ];

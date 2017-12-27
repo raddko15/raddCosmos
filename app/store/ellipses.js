@@ -3,22 +3,22 @@ import { AU } from './globalFactors';
 export const ellipses = [
     {
         name: "mercury",
-        width: AU,
+        width: AU*3,
     },
     {   name: "venus",
-        width: 2*AU,
+        width: 4*AU,
     },
     {
         name: "earth",
-        width: 3*AU
+        width: 5*AU
     },
     {
         name: "mars",
-        width: 5.52*AU,
+        width: 6.52*AU,
     },
     {
         name: "jupiter",
-        width: 7.20*AU,
+        width: 8.20*AU,
     },
     {
         name: "saturn",
@@ -26,11 +26,11 @@ export const ellipses = [
     },
     {
         name: "uranus",
-        width: 13.14*AU,
+        width: 11.14*AU,
     },
     {
         name: "neptun",
-        width: 16.34*AU,
+        width: 12.84*AU,
     }
 
 ];
