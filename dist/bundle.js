@@ -4272,16 +4272,14 @@ var sprite;
 var moon;
 
 var celesticalBodieGroup;
-
+var planetsGroup;
+var moonsGroup;
 
 
 function drawEllipse(width, height, ellipseWidth) {
     var ellipseHeight = ellipseWidth/2;
     graphics.lineStyle(2, 0xffffff, 1);
     graphics.drawEllipse(width, height, ellipseWidth, ellipseHeight);
-
-   // ellipse1 = new Phaser.Ellipse(width, height, ellipseWidth, ellipseHeight);
-
 }
 
 function drawPlanetCss(width, height,planet, posX, posY) {
@@ -4305,16 +4303,19 @@ function create() {
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(__WEBPACK_IMPORTED_MODULE_2_phaser___default.a.Physics.ARCADE);
 
-   //game.add.image(0, 0, 'stars');
+   game.add.image(0, 0, 'stars');
 
 
     celesticalBodieGroup = game.add.physicsGroup(__WEBPACK_IMPORTED_MODULE_2_phaser___default.a.Physics.ARCADE);
     celesticalBodieGroup.enableBody = true;
 
+    planetsGroup = game.add.physicsGroup(__WEBPACK_IMPORTED_MODULE_2_phaser___default.a.Physics.ARCADE);
+    planetsGroup.enableBody = true;
+
+    moonsGroup = game.add.physicsGroup(__WEBPACK_IMPORTED_MODULE_2_phaser___default.a.Physics.ARCADE);
+    moonsGroup.enableBody = true;
+
     // sun.body.setCircle(5);
-
-
-    //var sun = celesticalBodies.create
 
     graphics = game.add.graphics();
 
@@ -4326,19 +4327,22 @@ function create() {
         planetPosition.y = game.height / 2-15 + ellipse.width/2;
 
 
-        planet = celesticalBodieGroup.create(planetPosition.x, planetPosition.y, 'mars');
+        planet = planetsGroup.create(planetPosition.x, planetPosition.y, 'mars');
         planet.body.setCircle(30);
 
         if(__WEBPACK_IMPORTED_MODULE_3__store_planets__["a" /* planets */][idx].moons !== null) {
-            console.log(__WEBPACK_IMPORTED_MODULE_3__store_planets__["a" /* planets */][idx].moons[0].name);
-            moon = celesticalBodieGroup.create(planetPosition.x - 30, planetPosition.y - 30, 'moon');
+           // console.log(planets[idx].moons[0].name);
+            // 3 i 6 trzeba obliczyc oczywiscie
+            moon = moonsGroup.create(planetPosition.x+3, planetPosition.y+6, 'moon');
+            moon.title = __WEBPACK_IMPORTED_MODULE_3__store_planets__["a" /* planets */][idx].moons[0].name;
+            //console.log(moon);
 
         }
-
-
-
+//dodac mozliwosc paru ksiezycow - przejechac po tablicy moonsow a nie po 1 elemencie
 
     });
+
+    console.log(moonsGroup.children);
 
     graphics.generateTexture;
 
@@ -4353,12 +4357,17 @@ function create() {
     sun.body.setCircle(50);
 
     game.world.bringToTop(celesticalBodieGroup);
+
+    game.world.bringToTop(planetsGroup);
+    game.world.bringToTop(moonsGroup);
+
+    //zrobic grupe z grup i bringToTop
 }
 
 function update() {
 //x = Acos(t)
 //y = Bcos)(T)
-    //graphics.clear();
+
     var posX = 0;
     var posY = 0;
 
@@ -4370,24 +4379,48 @@ function update() {
         //  drawPlanetCss(game.width/2, game.height/2, planets[idx], posX, posY);
 
 
-        celesticalBodieGroup.children[idx].body.position.x = game.width / 2 + posX - 15;
-        celesticalBodieGroup.children[idx].body.position.y = game.height / 2 + posY - 15;
+        planetsGroup.children[idx].body.position.x = game.width / 2 + posX - 15;
+        planetsGroup.children[idx].body.position.y = game.height / 2 + posY - 15;
 // trzeba stworzyc chyba nowa grupe dla ksiezycow bo idzie petla po celesticalBodieGroup
         // if(planets[idx].moons !== null) {
         //     moon = celesticalBodieGroup.create(celesticalBodieGroup.children[idx].body.position.x, celesticalBodieGroup.children[idx].body.position.y - 30, 'moon');
         //
         // }
-    //      if(planets[idx].moons !== null) {
-    //     moon.body.position.x = celesticalBodieGroup.children[idx].body.position.x - 30;
-    //     moon.body.position.y = celesticalBodieGroup.children[idx].body.position.y - 30;
-    // }
+          if(__WEBPACK_IMPORTED_MODULE_3__store_planets__["a" /* planets */][idx].moons !== null) {
+             // console.log(lookForMoon(planets[idx].moons.name, moonsGroup.children ));
+             // console.log(planets[idx].moons[0].name);
+              moon = lookForMoon(__WEBPACK_IMPORTED_MODULE_3__store_planets__["a" /* planets */][idx].moons[0].name, moonsGroup.children );
+var x = lookForMoon(__WEBPACK_IMPORTED_MODULE_3__store_planets__["a" /* planets */][idx].moons[0].name, moonsGroup.children);
+             // console.log(moonsGroup.children);
+            //  console.log(moonsGroup.children);
+           //  console.log(x);
+            var moonX = (30 * Math.cos(game.time.time / 300));
+            var moonY = (30 * Math.sin(game.time.time / 300));
+
+            moon.body.position.x = planetsGroup.children[idx].body.position.x +3   + moonX;
+            moon.body.position.y = planetsGroup.children[idx].body.position.y +6 + moonY;
+
+          }
 
     });
 
 
 
 }
+function lookForMoon(moonName, moonsGroup1) {
+   var x = "";
+    moonsGroup1.forEach((moon , idx) => {
+        if(moon.title === moonName) {
+          //  console.log(moon.title);
+           x = moon;
+        }
 
+
+    });
+    return x;
+
+
+}
 // The mathematics is pretty simple, have a look at wikipedia.
 //
 //     You need to define your ellipse with a few parameters:
@@ -4429,7 +4462,7 @@ const AU = 40;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! babel-polyfill */131);
-module.exports = __webpack_require__(/*! C:\Users\FBC834\Desktop\Projects\raddCosmos\app\index.js */125);
+module.exports = __webpack_require__(/*! C:\Users\Radek\Desktop\MYGAME\raddCosmos\app\index.js */125);
 
 
 /***/ }),
@@ -10799,7 +10832,13 @@ const planets = [
         width: 1.52*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
         rotatingSpeed: 2160,
         color: 0x9a21a5,
-        moons: null
+        moons:  [
+            {
+                name: 'moonTest',
+                rotatingSpeed: 1800,
+                ellipse: 100
+            }
+        ]
     },
     {
         name: "jupiter",
@@ -10853,31 +10892,31 @@ const ellipses = [
         width: __WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */]*3,
     },
     {   name: "venus",
-        width: 4*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 6*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     },
     {
         name: "earth",
-        width: 5*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */]
+        width: 8*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */]
     },
     {
         name: "mars",
-        width: 6.52*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 10.52*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     },
     {
         name: "jupiter",
-        width: 8.20*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 12.20*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     },
     {
         name: "saturn",
-        width: 9.54*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */]
+        width: 14.54*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */]
     },
     {
         name: "uranus",
-        width: 11.14*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 16.14*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     },
     {
         name: "neptun",
-        width: 12.84*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
+        width: 18.84*__WEBPACK_IMPORTED_MODULE_0__globalFactors__["a" /* AU */],
     }
 
 ];

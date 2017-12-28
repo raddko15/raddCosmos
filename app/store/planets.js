@@ -34,7 +34,13 @@ export const planets = [
         width: 1.52*AU,
         rotatingSpeed: 2160,
         color: 0x9a21a5,
-        moons: null
+        moons:  [
+            {
+                name: 'moonTest',
+                rotatingSpeed: 1800,
+                ellipse: 100
+            }
+        ]
     },
     {
         name: "jupiter",
