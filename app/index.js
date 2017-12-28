@@ -1,20 +1,20 @@
-import { planets } from './store/planets';
-import { ellipses } from './store/ellipses'
 import 'pixi';
 import 'p2';
 import Phaser from 'phaser';
 
+import { planets } from './store/planets';
+import { ellipses } from './store/ellipses';
+import preload from './js/preload';
 
-var posX = 0;
-var posY = 0;
-const game = new Phaser.Game(1920, 1080, Phaser.AUTO, '', {preload: preload, create: create, update: update});
+
+export const game = new Phaser.Game(1920, 1080, Phaser.AUTO, '', {preload: preload, create: create, update: update});
 var graphics;
 var sprite;
+var moon;
 
-var planets1;
 var celesticalBodieGroup;
 
-var ellipse1;
+
 
 function drawEllipse(width, height, ellipseWidth) {
     var ellipseHeight = ellipseWidth/2;
@@ -32,15 +32,16 @@ function drawPlanetCss(width, height,planet, posX, posY) {
      graphics.endFill();
 
 }
-function preload() {
-    game.load.image('stars', 'app/assets/images/stars2.jpg');
-    game.load.image('sun', 'app/assets/images/sun3.png');
-    game.load.image('mars', 'app/assets/images/Mars2.png');
-}
+
 
 
 function create() {
     var skyLayer = game.add.group();
+    var planet;
+    var moonsEllipse;
+
+    var planetPosition = {};
+
 
     //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -62,37 +63,35 @@ function create() {
 
         drawEllipse(game.width / 2, game.height / 2, ellipse.width, ellipse.width / 2);
 
-        var planet = celesticalBodieGroup.create(game.width / 2 -15, game.height / 2-15 + ellipse.width/2, 'mars');
+        planetPosition.x = game.width / 2 - 15;
+        planetPosition.y = game.height / 2-15 + ellipse.width/2;
 
-        //planetsObj.push(celesticalBodieGroup.create(game.width / 2, game.height / 2 + ellipse.width/2, 'mars'));
+
+        planet = celesticalBodieGroup.create(planetPosition.x, planetPosition.y, 'mars');
         planet.body.setCircle(30);
-        planet.z = 10;
 
-       // planetsObj[idx].body.setCircle(10);
+        if(planets[idx].moons !== null) {
+            console.log(planets[idx].moons[0].name);
+            moon = celesticalBodieGroup.create(planetPosition.x - 30, planetPosition.y - 30, 'moon');
+
+        }
+
+
+
 
     });
 
-    //graphics.generateTexture;
-    var group1 = this.add.group();
+    graphics.generateTexture;
+
     sprite = game.add.sprite(game.width / 2, game.height / 2, graphics.generateTexture());
-    //sprite=game.add.group();
-    console.log(sprite);
     sprite.anchor.set(0.5);
 
     //  And destroy the original graphics object
     graphics.destroy();
 
-    // ellipses.forEach((ellipse, idx) => {
-    //     var planet = celesticalBodieGroup.create(game.width / 2 -15, game.height / 2-15 + ellipse.width/2, 'mars');
-    //     //planetsObj.push(celesticalBodieGroup.create(game.width / 2, game.height / 2 + ellipse.width/2, 'mars'));
-    //     celesticalBodieGroup.children[idx].body.setCircle(100.5);
-    // });
 
-console.log(celesticalBodieGroup);
     var sun = celesticalBodieGroup.create(game.width/2 -32.5, game.height / 2 -32.5, 'sun');
     sun.body.setCircle(50);
-
-
 
     game.world.bringToTop(celesticalBodieGroup);
 }
@@ -101,36 +100,28 @@ function update() {
 //x = Acos(t)
 //y = Bcos)(T)
     //graphics.clear();
-//console.log(planetsObj);
+    var posX = 0;
+    var posY = 0;
 
     ellipses.forEach((ellipse, idx) => {
         posX = (ellipse.width * Math.cos(game.time.time / planets[idx].rotatingSpeed));
-        posY = (ellipse.width/2 * Math.sin(game.time.time / planets[idx].rotatingSpeed));
+        posY = (ellipse.width / 2 * Math.sin(game.time.time / planets[idx].rotatingSpeed));
 
-       // drawEllipse(game.width/2, game.height/2, ellipse.width, ellipse.width/2);
-      //  drawPlanetCss(game.width/2, game.height/2, planets[idx], posX, posY);
-
-
-       // planetsObj[idx].body.setZeroVelocity();
-         celesticalBodieGroup.children[idx].body.position.x = game.width/2 + posX - 15;
-         celesticalBodieGroup.children[idx].body.position.y = game.height/2  + posY - 15;
+        // drawEllipse(game.width/2, game.height/2, ellipse.width, ellipse.width/2);
+        //  drawPlanetCss(game.width/2, game.height/2, planets[idx], posX, posY);
 
 
-       //   celesticalBodieGroup.children[idx].body.velocity.y=  100;
-       // celesticalBodieGroup.children[idx].kill();
-
-       // / planets1 = (celesticalBodieGroup.create(game.width/2 + posX, game.height/2  + posY, 'mars'));
-
-
-       //   planetsObj[idx].body.velocity.y += posY/100;
-        // planetsObj[idx].y = game.height/2  + posY;
-         //console.log( planetsObj[idx].x);
-
-        // graphics.lineStyle(1, planets[idx].color, 1);
-        // graphics.beginFill(planets[idx].color, 1);
-        // graphics.drawCircle(game.width/2 + posX, game.height/2  + posY, planets[idx].width);
-        // graphics.endFill();
-
+        celesticalBodieGroup.children[idx].body.position.x = game.width / 2 + posX - 15;
+        celesticalBodieGroup.children[idx].body.position.y = game.height / 2 + posY - 15;
+// trzeba stworzyc chyba nowa grupe dla ksiezycow bo idzie petla po celesticalBodieGroup
+        // if(planets[idx].moons !== null) {
+        //     moon = celesticalBodieGroup.create(celesticalBodieGroup.children[idx].body.position.x, celesticalBodieGroup.children[idx].body.position.y - 30, 'moon');
+        //
+        // }
+    //      if(planets[idx].moons !== null) {
+    //     moon.body.position.x = celesticalBodieGroup.children[idx].body.position.x - 30;
+    //     moon.body.position.y = celesticalBodieGroup.children[idx].body.position.y - 30;
+    // }
 
     });
 
