@@ -1,0 +1,8 @@
+1) Statek i poruszanie sie: https://phaser.io/examples/v2/arcade-physics/asteroids-movement
+2) dodanie asteroid, (wiekszej liczby elementow do elipsy)
+3) dodanie wiekszej ilosci ksiezycow / satelitow
+4) kolizje statek - planeta
+5) grzanie slonca
+
+6) 2 graczy ? (drugi np na wsadzie)
+7) poruszanie sie spriteow planet, potrzebne grafiki

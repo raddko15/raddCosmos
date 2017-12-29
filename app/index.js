@@ -2,49 +2,37 @@ import 'pixi';
 import 'p2';
 import Phaser from 'phaser';
 
-import { planets } from './store/planets';
+import { planets, sunProps } from './store/planets';
 import { ellipses } from './store/ellipses';
+import drawEllipse from './js/celesticalObjects/ellipses';
 import preload from './js/preload';
+//import create from './js/create';
+import lol from './js/create';
+
+import lookForMoon from './js/celesticalObjects/moons';
 
 
 export const game = new Phaser.Game(1920, 1080, Phaser.AUTO, '', {preload: preload, create: create, update: update});
-var graphics;
-var sprite;
-var moon;
 
-var celesticalBodieGroup;
-var planetsGroup;
-var moonsGroup;
+export var test = "Radek";
+lol();
 
+export var graphics;
+export var sprite;
+export var moon;
 
-function drawEllipse(width, height, ellipseWidth) {
-    var ellipseHeight = ellipseWidth/2;
-    graphics.lineStyle(2, 0xffffff, 1);
-    graphics.drawEllipse(width, height, ellipseWidth, ellipseHeight);
-}
-
-function drawPlanetCss(width, height,planet, posX, posY) {
-     graphics.lineStyle(1, planet.color, 1);
-     graphics.beginFill(planet.color, 1);
-     graphics.drawCircle(width + posX, height  + posY, planet.width);
-     graphics.endFill();
-
-}
-
+export var celesticalBodieGroup;
+export var planetsGroup;
+export var moonsGroup;
 
 
 function create() {
-    var skyLayer = game.add.group();
+   // console.log(dimensions.width, dimensions.height);
     var planet;
-    var moonsEllipse;
-
     var planetPosition = {};
 
-
-    //  We're going to be using physics, so enable the Arcade Physics system
     game.physics.startSystem(Phaser.Physics.ARCADE);
-
-   game.add.image(0, 0, 'stars');
+    // game.add.image(0, 0, 'stars');
 
 
     celesticalBodieGroup = game.add.physicsGroup(Phaser.Physics.ARCADE);
@@ -56,36 +44,37 @@ function create() {
     moonsGroup = game.add.physicsGroup(Phaser.Physics.ARCADE);
     moonsGroup.enableBody = true;
 
-    // sun.body.setCircle(5);
-
     graphics = game.add.graphics();
+
+    var sun = celesticalBodieGroup.create(game.width/2 - sunProps.width/2, game.height / 2 - sunProps.width/2, sunProps.name);
+    sun.body.setCircle(sunProps.width);
 
     ellipses.forEach((ellipse, idx) => {
 
-        drawEllipse(game.width / 2, game.height / 2, ellipse.width, ellipse.width / 2);
+        drawEllipse(game.width / 2, game.height / 2, ellipse.width);
 
-        planetPosition.x = game.width / 2 - 15;
-        planetPosition.y = game.height / 2-15 + ellipse.width/2;
+        //
+        // planets.forEach(planet => {
+        //     if (planet.ellipseId === idx) {
+
+               planetPosition.x = game.width / 2 - planets[idx].width/2;
+                planetPosition.y = game.height / 2 - planets[idx].width/2 + ellipse.width/2;
 
 
-        planet = planetsGroup.create(planetPosition.x, planetPosition.y, 'mars');
-        planet.body.setCircle(30);
+                planet = planetsGroup.create(planetPosition.x, planetPosition.y, planets[idx].name);
+                planet.body.setCircle(planets[idx].width);
 
-        if(planets[idx].moons !== null) {
-           // console.log(planets[idx].moons[0].name);
-            // 3 i 6 trzeba obliczyc oczywiscie
-            moon = moonsGroup.create(planetPosition.x+3, planetPosition.y+6, 'moon');
-            moon.title = planets[idx].moons[0].name;
-            //console.log(moon);
+                if(planets[idx].moons !== null) {
+                    // console.log(planets[idx].moons[0].name);
+                    moon = moonsGroup.create(planetPosition.x+planets[idx].width/2 - planets[idx].moons[0].width/2 , planetPosition.y + planets[idx].width/2 - planets[idx].moons[0].width/2, planets[idx].moons[0].name);
+                    moon.title = planets[idx].moons[0].name;
+                }
 
-        }
+
 //dodac mozliwosc paru ksiezycow - przejechac po tablicy moonsow a nie po 1 elemencie
 
     });
 
-    console.log(moonsGroup.children);
-
-    graphics.generateTexture;
 
     sprite = game.add.sprite(game.width / 2, game.height / 2, graphics.generateTexture());
     sprite.anchor.set(0.5);
@@ -93,85 +82,53 @@ function create() {
     //  And destroy the original graphics object
     graphics.destroy();
 
-
-    var sun = celesticalBodieGroup.create(game.width/2 -32.5, game.height / 2 -32.5, 'sun');
-    sun.body.setCircle(50);
-
     game.world.bringToTop(celesticalBodieGroup);
-
-    game.world.bringToTop(planetsGroup);
     game.world.bringToTop(moonsGroup);
+    game.world.bringToTop(planetsGroup);
+
 
     //zrobic grupe z grup i bringToTop
 }
-
 function update() {
 //x = Acos(t)
 //y = Bcos)(T)
 
-    var posX = 0;
-    var posY = 0;
-
+    let posX = 0;
+    let posY = 0;
+    //
     ellipses.forEach((ellipse, idx) => {
-        posX = (ellipse.width * Math.cos(game.time.time / planets[idx].rotatingSpeed));
-        posY = (ellipse.width / 2 * Math.sin(game.time.time / planets[idx].rotatingSpeed));
 
-        // drawEllipse(game.width/2, game.height/2, ellipse.width, ellipse.width/2);
-        //  drawPlanetCss(game.width/2, game.height/2, planets[idx], posX, posY);
+                let planetMap =  planetsGroup.children[idx];
+                let planetStore = planets[idx];
+                let moonsStore = planets[idx].moons;
+                posX = (ellipse.width * Math.cos(game.time.time / planetStore.rotatingSpeed));
+                posY = (ellipse.width / 2 * Math.sin(game.time.time / planetStore.rotatingSpeed));
 
 
-        planetsGroup.children[idx].body.position.x = game.width / 2 + posX - 15;
-        planetsGroup.children[idx].body.position.y = game.height / 2 + posY - 15;
-// trzeba stworzyc chyba nowa grupe dla ksiezycow bo idzie petla po celesticalBodieGroup
-        // if(planets[idx].moons !== null) {
-        //     moon = celesticalBodieGroup.create(celesticalBodieGroup.children[idx].body.position.x, celesticalBodieGroup.children[idx].body.position.y - 30, 'moon');
-        //
-        // }
-          if(planets[idx].moons !== null) {
-             // console.log(lookForMoon(planets[idx].moons.name, moonsGroup.children ));
-             // console.log(planets[idx].moons[0].name);
-              moon = lookForMoon(planets[idx].moons[0].name, moonsGroup.children );
-var x = lookForMoon(planets[idx].moons[0].name, moonsGroup.children);
-             // console.log(moonsGroup.children);
-            //  console.log(moonsGroup.children);
-           //  console.log(x);
-            var moonX = (30 * Math.cos(game.time.time / 300));
-            var moonY = (30 * Math.sin(game.time.time / 300));
+                planetMap.body.position.x = game.width / 2 + posX -  planetStore.width/2;
+                planetsGroup.children[idx].body.position.y = game.height / 2 + posY - planetStore.width/2;
 
-            moon.body.position.x = planetsGroup.children[idx].body.position.x +3   + moonX;
-            moon.body.position.y = planetsGroup.children[idx].body.position.y +6 + moonY;
 
-          }
+                if (moonsStore !== null) {
+
+                    let moonX = (moonsStore[0].ellipse * Math.cos(game.time.time / moonsStore[0].rotatingSpeed));
+                    let moonY = (moonsStore[0].ellipse / 2 * Math.sin(game.time.time / moonsStore[0].rotatingSpeed));
+                    hideMoonBehindPlanet(moonX, moonY, moonsStore[0].ellipse, moonsStore[0].width);
+
+                    moon = lookForMoon(moonsStore[0].name, moonsGroup.children);
+                    moon.body.position.x = planetMap.body.position.x  + planets[idx].width/2 - moonsStore[0].width/2+ moonX;
+                    moon.body.position.y = planetMap.body.position.y + planets[idx].width/2.5 - moonsStore[0].width/2 + moonY;
+                }
 
     });
 
-
-
 }
-function lookForMoon(moonName, moonsGroup1) {
-   var x = "";
-    moonsGroup1.forEach((moon , idx) => {
-        if(moon.title === moonName) {
-          //  console.log(moon.title);
-           x = moon;
-        }
+function hideMoonBehindPlanet(moonX, moonY, moonsEllipse, moonsWidth) {
+    if(moonY > 0 && moonX < moonsEllipse + moonsWidth && moonX > - moonsEllipse/2 - moonsWidth) {
 
-
-    });
-    return x;
-
-
+        game.world.bringToTop(moonsGroup);
+    }
+    else {
+        game.world.bringToTop(planetsGroup);
+    }
 }
-// The mathematics is pretty simple, have a look at wikipedia.
-//
-//     You need to define your ellipse with a few parameters:
-//
-//     x, y: center of the ellipse
-// a, b: semimajor and semiminor axes
-// If you want to move on the elipses this means that you change the angle between the major axes and your position on the ellipse. Lets call this angle alpha.
-//
-//     Your position (X,Y) is:
-//
-//     X = x + (a * Math.cos(alpha));
-// Y = y + (b * Math.sin(alpha));
-// In order to move left or right you need to increase/decrease alpha and then recalculate your position.

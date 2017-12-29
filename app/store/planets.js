@@ -1,73 +1,89 @@
-import { AU } from './globalFactors';
+import { AU, speedFactor } from './globalFactors';
 
+export const sunProps = {
+    name: "sun",
+    width: 200
+};
 export const planets = [
     {
         name: "mercury",
-        width: 0.39*AU,
-        rotatingSpeed: 1800,
+        width: 20,
+        rotatingSpeed: 1800*speedFactor,
         color: 0xdb1c0f,
-        moons: null
+        moons: null,
+        ellipseId:0
 
     },
-    {   name: "venus",
-        width: 0.72*AU,
-        rotatingSpeed: 1080,
-        color: 0xebf441,
-        moons: null
+
+    {
+        name: "venus",
+        width:46,
+        rotatingSpeed: 720*speedFactor,
+        color: 0x7af442,
+        moons: null,
+        ellipseId:1
     },
     {
         name: "earth",
-        width: AU,
-        rotatingSpeed: 720,
-        color: 0x7af442,
-        moons:
-            [
-                {
-                    name: 'moon',
-                    rotatingSpeed: 1800,
-                    ellipse: 100
-                }
-            ]
-    },
-    {
-        name: "mars",
-        width: 1.52*AU,
-        rotatingSpeed: 2160,
+        width: 48,
+        rotatingSpeed: 2160*speedFactor,
         color: 0x9a21a5,
         moons:  [
             {
-                name: 'moonTest',
-                rotatingSpeed: 1800,
-                ellipse: 100
+                name: 'moon',
+                rotatingSpeed: 300,
+                width: 16,
+                ellipse: 40,
             }
-        ]
+        ],
+        ellipseId:2
+    },
+    {
+        name: "mars",
+        width: 30,
+        rotatingSpeed: 2520*speedFactor,
+        color: 0x4d8985,
+        moons: null,
+        ellipseId:3
     },
     {
         name: "jupiter",
-        width: 0.5*AU,
-        rotatingSpeed: 1440,
+        width: 90,
+        rotatingSpeed: 3000*speedFactor,
         color: 0x0b14bc,
-        moons: null
+        moons:  null,
+        ellipseId:4
     },
+
     {
         name: "saturn",
-        width: 1*AU,
-        rotatingSpeed: 2520,
-        color: 0x4d8985,
-        moons: null
+        width: 90,
+        rotatingSpeed: 1600*speedFactor,
+        color: 0x3f4949,
+        moons: null,
+        ellipseId:5
     },
     {
         name: "uranus",
-        width: 1.3*AU,
-        rotatingSpeed: 1600,
-        color: 0x3f4949,
-        moons: null
-    },
-    {
-        name: "neptun",
-        width: 1.5*AU,
-        rotatingSpeed: 2400,
+        width: 60,
+        rotatingSpeed: 2400*speedFactor,
         color: 0xc47c2b,
-        moons: null
-    }
+        moons: null,
+        ellipseId:6
+    },
+    {   name: "neptune",
+        width: 58,
+        rotatingSpeed: 1080*speedFactor,
+        color: 0xebf441,
+        moons:
+            [
+                {
+                    name: 'triton',
+                    rotatingSpeed: 300,
+                    width: 12,
+                    ellipse: 40
+                }
+            ],
+        ellipseId:7
+    },
 ];

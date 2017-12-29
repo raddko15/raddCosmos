@@ -1,5 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
+
+
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
@@ -71,5 +74,6 @@ module.exports = {
             'pixi': pixi,
             'p2': p2
         }
-    }
+    },
+
 };
